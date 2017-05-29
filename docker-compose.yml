@@ -10,7 +10,6 @@ services:
       dockerfile: ./Dockerfile
     volumes:
       - ./docker/bmo/conf/bugzilla.conf:/etc/httpd/conf.d/bugzilla.conf:ro
-      - ./docker/bmo/conf/supervisord.conf:/etc/supervisord.conf:ro
 
   phabext:
     image: mozilla/phabext
