@@ -11,11 +11,8 @@ services:
     volumes:
       - ./docker/bmo/conf/bugzilla.conf:/etc/httpd/conf.d/bugzilla.conf:ro
 
-  phabext:
-    image: mozilla/phabext
-
   phabricator:
-    image: mozilla/mozphab
+    image: mozilla/phabext
     environment:
       - MYSQL_HOST=phabdb
       - MYSQL_PORT=3306
@@ -26,9 +23,6 @@ services:
     restart: on-failure
     depends_on:
       - phabdb
-      - phabext
-    volumes_from:
-      - phabext
 
   phabricator.test:
     image: nginx:alpine
