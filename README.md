@@ -60,7 +60,7 @@ account to create other accounts, projects, etc.
 
 ## BMO Development
 
-You can access code in the container using `docker bmoextensions_bmo.test_1 su - bugzilla`
+You can access code in the container using `docker exec -it bmoextensions_bmo.test_1 su - bugzilla`
 command. The 'bmoextensions_bmo.test_1' name may vary depending on how you checked out
 the GitHub repo code and what the name of the checkout directory is.
 
