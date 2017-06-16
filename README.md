@@ -85,3 +85,26 @@ $ d cp bmoextensions_bmo.test_1:/tmp/my-feature.patch ~/my-feature.patch
 Then you can upload the patch as needed for review. Or you can create a pull request
 directly from inside the container.
 
+## Starting the Push Daemon
+If your development requires the use of a push connector, you'll need to
+manually start the push daemon.
+
+Start by opening a new terminal and accessing the container:
+
+```bash
+docker exec -it bmoextensions_bmo.test_1 su - bugzilla
+```
+
+Navigate to the bmo directory:
+
+```bash
+cd /var/www/html/bmo
+```
+
+Start the push daemon:
+
+```bash
+perl extensions/Push/bin/bugzilla-pushd.pl -f -d start
+```
+
+Push messages will display in the terminal as they are executed.
