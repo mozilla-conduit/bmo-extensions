@@ -3,7 +3,7 @@ Docker Development Environment for BMO and Phabricator Integration
 
 ## How to install Docker
 
-Visit [Docker][https://docker.com] and get Docker up and running on your system.
+Visit [Docker](https://docker.com) and get Docker up and running on your system.
 
 ## How to build BMO Docker image
 
@@ -55,7 +55,7 @@ components, etc.
 
 To access the Phabricator site, point your browser to 'http://phabricator.test'.
 
-The administrator login is 'admin' and the password is 'admin'. You can use this
+The administrator login is `admin` and the password is `admin`. You can use this
 account to create other accounts, projects, etc.
 
 ## BMO Development
