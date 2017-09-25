@@ -5,7 +5,7 @@ From the `bmo-extensions` directory, do `docker-compose up --build`.  At this po
 
 ## Configuration
 
-1.  Navigate to http://bmo.test/ and log in as `admin@mozilla.bugs` with password `password`.
+1.  Navigate to http://bmo.test/ and log in as `admin@mozilla.bugs` with password `password123456789!`.
 2.  Navigate to http://bmo.test/editparams.cgi?section=phabbugz and ensure it's turned on
 3.  Navigate to http://phabricator.test/config/group/bugzilla/ and make sure your settings match your local setup
 
@@ -76,7 +76,8 @@ USER app
 Those commands move our test repo into the box, as well as give us permissions to read/write that dir.
 
 ## Caveats
-1.  The BMO container isn't pulling fresh code from mozilla-bteam/bmo master.  In fact, it's a bit behind.  I don't know how to update that but what I do know you must `docker-compose down && docker-compose up --build` every time you make a change.  Note that any changes to BMO files must be done *every time you `d-c down && dc-up --b`*.  Really annoying.
+1.  The BMO container isn't pulling fresh code from mozilla-bteam/bmo master. To update, change to the bugzilla root directory (`/var/www/html/bmo`) and run `git pull`. This will pull the latest changes from the bugzilla repo. modperl is disabled for the 
+bugzilla instance so any changes you make to the code should show up immediately. You can create a diff of your changes by doing `git diff > /tmp/some.patch`. And then from the host system, do `docker cp bmoextensions_bmo.test_1:/tmp/some.patch .` to copy the patch out of the running container.
 
 2.  We just mounting a volume to local phabricator but it's incredibly slow.
 
