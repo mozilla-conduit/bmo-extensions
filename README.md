@@ -47,7 +47,7 @@ After you configure you proxy settings as outlined above, you can simply point y
 browser to `http://bmo.test` to see the the BMO home page. The bmo.test domain is recognized
 on the internal Docker network so no need to find out the IP address of the container.
 
-The Administrator login is `admin@mozilla.bugs` and the password is `password`.
+The Administrator login is `admin@mozilla.bugs` and the password is `password123456789!`.
 You can use the Administrator account to creat other users, add products or
 components, etc.
 
