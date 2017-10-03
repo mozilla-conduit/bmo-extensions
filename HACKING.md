@@ -19,24 +19,6 @@ docker exec -it bmoextensions_bmo.test_1 su - bugzilla
 
 ```
 
-## Using arc
-Start by getting into the phabricator container with the command above.  Then:
-
-```
-cd ../test_repo/
-./../app/arcanist/bin/arc set-config default http://phabricator.test
-./../app/arcanist/bin/arc install-certificate
-
-[ HERE YOU NEED TO OPEN YOUR BROWSER TO GET AND PASTE IN THE CONDUIT API KEY]
-
-git config --global user.email "you@example.com"
-git config --global user.name "Your Name"
-
-./../app/arcanist/bin/arc diff
-```
-
-That will start your commit revision.  Fill in the desired info and yay, you create a diff!
-
 ## Hacking on phabricator-extensions at the same time as bmo-extensions
 
 1.  Clone https://github.com/mozilla-services/phabricator-extensions
@@ -54,6 +36,33 @@ services:
     build:
       context: /YOUR/PATH/TO/phabricator-extensions
       dockerfile: ./Dockerfile
+```
+
+## Using arc
+
+To use `arc` with your new account:
+
+1. In the `bmo-extensions` project root run `invoke shell` - a Bash shell will open:
+```bash
+$ invoke shell
+```
+2. (optional) Change the account `arc` uses to talk with phabricator (default is the _admin_ account):
+```bash
+$ arc install-certificate
+```
+
+3. Create a test repo with an example commit:
+```bash
+$ git init test_repo
+$ cd test_repo
+$ echo "test file" > foo.txt
+$ git add foo.txt
+$ git commit -m "test commit"
+```
+
+4. Send a diff to Phabricator:
+```bash
+$ arc diff
 ```
 
 ## phabricator-extensions modifications

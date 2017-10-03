@@ -1,0 +1,17 @@
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
+#
+# This compose file is meant to be used via 'invoke shell'.
+#
+# Runs a development shell with 'arc' installed.
+
+version: '2'
+services:
+  shell:
+    build:
+      context: ./docker/shell
+      dockerfile: ./Dockerfile
+    depends_on:
+      - phabricator.test
+      - bmo.test
