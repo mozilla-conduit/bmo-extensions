@@ -5,11 +5,23 @@
 version: '2'
 services:
   bmo.test:
-    build:
-      context: ./docker/bmo
-      dockerfile: ./Dockerfile
+    image: mozillabteam/bmo:test
+    command: demo
     volumes:
-      - ./docker/bmo/conf/bugzilla.conf:/etc/httpd/conf.d/bugzilla.conf:ro
+      - bmo-data-dir:/app/data
+    environment:
+      - PORT=80
+      - LOCALCONFIG_ENV=1
+      - BMO_db_host=bmodb
+      - BMO_db_name=bugs
+      - BMO_db_user=bugs
+      - BMO_db_pass=bugs
+      - BMO_memcached_namespace=bugzilla
+      - BMO_memcached_servers=memcached:11211
+      - BZ_QA_ANSWERS_FILE=/app/.circleci/checksetup_answers.txt
+    depends_on:
+      - bmodb
+      - memcached
 
   phabricator:
     image: mozilla/phabext
@@ -38,6 +50,19 @@ services:
       - phabricator
       - tinyproxy
 
+  bmodb:
+    image: mozillabteam/bmo-mysql:5.6
+    volumes:
+      - bmo-mysql-db:/var/lib/mysql
+    environment:
+      - MYSQL_DATABASE=bugs
+      - MYSQL_USER=bugs
+      - MYSQL_PASSWORD=bugs
+      - MYSQL_ALLOW_EMPTY_PASSWORD=1
+
+  memcached:
+    image: memcached:latest
+
   phabdb:
     image: mysql:5.5
     volumes:
@@ -56,3 +81,5 @@ services:
 
 volumes:
   phabricator-mysql-db:
+  bmo-mysql-db:
+  bmo-data-dir:
