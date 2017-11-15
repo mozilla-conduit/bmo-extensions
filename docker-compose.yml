@@ -3,13 +3,14 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 version: '2'
+
 services:
   bmo.test:
     image: mozillabteam/bmo:test
     command: demo
     volumes:
       - bmo-data-dir:/app/data
-    environment:
+    environment: &bmo_env
       - PORT=80
       - LOCALCONFIG_ENV=1
       - BMO_db_host=bmodb
@@ -19,7 +20,24 @@ services:
       - BMO_memcached_namespace=bugzilla
       - BMO_memcached_servers=memcached:11211
       - BZ_QA_ANSWERS_FILE=/app/.circleci/checksetup_answers.txt
+      - CONDUIT_LOGIN=conduit@mozilla.bugs
+      - CONDUIT_PASSWORD=password123456789!
+      - CONDUIT_API_KEY=zQ5TSBzq7tTZMtKYq9K1ZqJMjifKx3cPL7pIGk9Q
+      - PHABRICATOR_LOGIN=phab-bot@bmo.tld
+      - PHABRICATOR_PASSWORD=password123456789!
+      - PHABRICATOR_API_KEY=8G4ly8JkxbypZgh5XrdiHWExVEjPq5S3HvMBll1K
     depends_on:
+      - bmodb
+      - memcached
+
+  bmo.pushd:
+    image: mozillabteam/bmo:test
+    command: pushd
+    volumes:
+      - bmo-data-dir:/app/data
+    environment: *bmo_env
+    depends_on:
+      - bmo.test
       - bmodb
       - memcached
 
