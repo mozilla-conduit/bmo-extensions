@@ -11,8 +11,9 @@ services:
     volumes:
       - bmo-data-dir:/app/data
     environment: &bmo_env
-      - PORT=80
       - LOCALCONFIG_ENV=1
+      - ALLOW_UNSAFE_AUTH_DELEGATION=1
+      - PORT=80
       - BMO_db_host=bmodb
       - BMO_db_name=bugs
       - BMO_db_user=bugs
