@@ -6,13 +6,13 @@ version: '2'
 
 services:
   bmo.test:
-    image: mozillabteam/bmo:test
+    image: mozillabteam/bmo
     command: demo
     volumes:
       - bmo-data-dir:/app/data
     environment: &bmo_env
       - LOCALCONFIG_ENV=1
-      - ALLOW_UNSAFE_AUTH_DELEGATION=1
+      - BUGZILLA_UNSAFE_AUTH_DELEGATION=1
       - PORT=80
       - BMO_db_host=bmodb
       - BMO_db_name=bugs
@@ -31,9 +31,30 @@ services:
       - bmodb
       - memcached
 
+  bmo.feed:
+    image: mozillabteam/bmo
+    command:
+      - perl
+      - extensions/PhabBugz/bin/phabbugz_feed.pl
+      - start
+      - '-d'
+      - '-f'
+    volumes:
+      - bmo-data-dir:/app/data
+    environment: *bmo_env
+    depends_on:
+      - bmo.test
+      - bmodb
+      - memcached
+
   bmo.pushd:
-    image: mozillabteam/bmo:test
-    command: pushd
+    image: mozillabteam/bmo
+    command:
+      - perl
+      - extensions/Push/bin/bugzilla-pushd.pl
+      - start
+      - '-d'
+      - '-f'
     volumes:
       - bmo-data-dir:/app/data
     environment: *bmo_env
@@ -66,6 +87,7 @@ services:
       - ./docker/phabricator/site.conf:/etc/nginx/conf.d/default.conf:ro
     volumes_from:
       - phabricator
+    restart: on-failure
     depends_on:
       - phabricator
       - tinyproxy
@@ -91,6 +113,7 @@ services:
       - ./docker/phabricator/demo.sql.gz:/docker-entrypoint-initdb.d/demo.sql.gz
     environment:
       - MYSQL_ROOT_PASSWORD=password
+    restart: on-failure
 
   tinyproxy:
     build:
