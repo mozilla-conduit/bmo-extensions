@@ -3,16 +3,69 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 version: '2'
+
 services:
   bmo.test:
-    build:
-      context: ./docker/bmo
-      dockerfile: ./Dockerfile
+    image: mozillabteam/bmo
+    command: demo
     volumes:
-      - ./docker/bmo/conf/bugzilla.conf:/etc/httpd/conf.d/bugzilla.conf:ro
+      - bmo-data-dir:/app/data
+    environment: &bmo_env
+      - LOCALCONFIG_ENV=1
+      - BUGZILLA_UNSAFE_AUTH_DELEGATION=1
+      - PORT=80
+      - BMO_db_host=bmodb
+      - BMO_db_name=bugs
+      - BMO_db_user=bugs
+      - BMO_db_pass=bugs
+      - BMO_memcached_namespace=bugzilla
+      - BMO_memcached_servers=memcached:11211
+      - BZ_QA_ANSWERS_FILE=/app/.circleci/checksetup_answers.txt
+      - CONDUIT_LOGIN=conduit@mozilla.bugs
+      - CONDUIT_PASSWORD=password123456789!
+      - CONDUIT_API_KEY=zQ5TSBzq7tTZMtKYq9K1ZqJMjifKx3cPL7pIGk9Q
+      - PHABRICATOR_LOGIN=phab-bot@bmo.tld
+      - PHABRICATOR_PASSWORD=password123456789!
+      - PHABRICATOR_API_KEY=8G4ly8JkxbypZgh5XrdiHWExVEjPq5S3HvMBll1K
+    depends_on:
+      - bmodb
+      - memcached
+
+  bmo.feed:
+    image: mozillabteam/bmo
+    command:
+      - perl
+      - extensions/PhabBugz/bin/phabbugz_feed.pl
+      - start
+      - '-d'
+      - '-f'
+    volumes:
+      - bmo-data-dir:/app/data
+    environment: *bmo_env
+    depends_on:
+      - bmo.test
+      - bmodb
+      - memcached
+
+  bmo.pushd:
+    image: mozillabteam/bmo
+    command:
+      - perl
+      - extensions/Push/bin/bugzilla-pushd.pl
+      - start
+      - '-d'
+      - '-f'
+    volumes:
+      - bmo-data-dir:/app/data
+    environment: *bmo_env
+    depends_on:
+      - bmo.test
+      - bmodb
+      - memcached
 
   phabricator:
     image: mozilla/phabext
+    command: dev_start
     environment:
       - MYSQL_HOST=phabdb
       - MYSQL_PORT=3306
@@ -34,9 +87,23 @@ services:
       - ./docker/phabricator/site.conf:/etc/nginx/conf.d/default.conf:ro
     volumes_from:
       - phabricator
+    restart: on-failure
     depends_on:
       - phabricator
       - tinyproxy
+
+  bmodb:
+    image: mozillabteam/bmo-mysql:5.6
+    volumes:
+      - bmo-mysql-db:/var/lib/mysql
+    environment:
+      - MYSQL_DATABASE=bugs
+      - MYSQL_USER=bugs
+      - MYSQL_PASSWORD=bugs
+      - MYSQL_ALLOW_EMPTY_PASSWORD=1
+
+  memcached:
+    image: memcached:latest
 
   phabdb:
     image: mysql:5.5
@@ -46,6 +113,7 @@ services:
       - ./docker/phabricator/demo.sql.gz:/docker-entrypoint-initdb.d/demo.sql.gz
     environment:
       - MYSQL_ROOT_PASSWORD=password
+    restart: on-failure
 
   tinyproxy:
     build:
@@ -56,3 +124,5 @@ services:
 
 volumes:
   phabricator-mysql-db:
+  bmo-mysql-db:
+  bmo-data-dir:
