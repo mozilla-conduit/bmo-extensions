@@ -55,16 +55,16 @@ components, etc.
 
 To access the Phabricator site, point your browser to 'http://phabricator.test'.
 
-The administrator login is `admin` and the password is `admin`. You can use this
+The administrator login is `admin` and the password is `password123456789!`. You can use this
 account to create other accounts, projects, etc.
 
 ## BMO Development
 
-You can access code in the container using `docker exec -it bmoextensions_bmo.test_1 su - bugzilla`
+You can access code in the container using `docker exec -it bmoextensions_bmo.test_1 bash`
 command. The 'bmoextensions_bmo.test_1' name may vary depending on how you checked out
 the GitHub repo code and what the name of the checkout directory is.
 
-Once you have logged in to a shell, change to the '/var/www/html/bmo' directory. This is
+Once you have logged in to a shell, you should be in the '/app' directory. This is
 the BMO code root. The Phabricator extension code lives in 'extensions/PhabBugz'. mod_perl
 is disabled for the webroot so any changes you make should show up immediately on the site.
 Git is installed so you should be able to use git to create branches, update, and generate
@@ -72,7 +72,7 @@ diffs as normal. You can use 'docker cp' to copy patches to your local host file
 as needed. An example workflow may look like:
 
 ```bash
-$ cd /var/www/html/bmo
+$ cd /app
 $ git status
 $ git checkout -b my-feature
 $ vi extensions/PhabBugz/Extension.pm (make some changes and save)
@@ -84,27 +84,3 @@ $ d cp bmoextensions_bmo.test_1:/tmp/my-feature.patch ~/my-feature.patch
 
 Then you can upload the patch as needed for review. Or you can create a pull request
 directly from inside the container.
-
-## Starting the Push Daemon
-If your development requires the use of a push connector, you'll need to
-manually start the push daemon.
-
-Start by opening a new terminal and accessing the container:
-
-```bash
-docker exec -it bmoextensions_bmo.test_1 su - bugzilla
-```
-
-Navigate to the bmo directory:
-
-```bash
-cd /var/www/html/bmo
-```
-
-Start the push daemon:
-
-```bash
-perl extensions/Push/bin/bugzilla-pushd.pl -f -d start
-```
-
-Push messages will display in the terminal as they are executed.

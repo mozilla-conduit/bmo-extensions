@@ -23,11 +23,8 @@ docker exec -it bmoextensions_bmo.test_1 su - bugzilla
 
 1.  Clone https://github.com/mozilla-services/phabricator-extensions
 
-## bmo-extensions Modifications
-
-In the `bmo-extensions` project directory:
-
-1. Create a new file in the `bmo-extensions` project directory called `docker-compose.override.yml`.  Add the following contents:
+2. In the `bmo-extensions` project directory, create a new file in the `bmo-extensions` project directory called `docker-compose.override.yml`. 
+   Add the following contents:
 
 ```yaml
 version: '2'
@@ -35,6 +32,22 @@ services:
   phabricator:
     build:
       context: /YOUR/PATH/TO/phabricator-extensions
+      dockerfile: ./Dockerfile
+```
+
+## Hacking on bmo
+
+1.  Clone https://github.com/mozilla-bteam/bmo
+
+2. In the `bmo-extensions` project directory, create a new file in the `bmo-extensions` project directory called `docker-compose.override.yml`. 
+   Add the following contents:
+
+```yaml
+version: '2'
+services:
+  bmo.test:
+    build:
+      context: /YOUR/PATH/TO/bmo
       dockerfile: ./Dockerfile
 ```
 
